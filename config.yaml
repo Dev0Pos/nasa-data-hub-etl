@@ -1,0 +1,19 @@
+# NASA Data Hub ETL Configuration
+
+# NASA EONET API Configuration
+nasa:
+  api_url: "https://eonet.gsfc.nasa.gov/api/v3"
+  # api_key: ""  # Set via NASA_API_KEY environment variable
+
+# ETL Pipeline Configuration
+etl:
+  batch_size: 1000
+  interval: "1h"
+  retry_attempts: 3
+  retry_delay: "30s"
+
+# Server Configuration (for health checks and metrics)
+server:
+  port: 8080
+  read_timeout: "30s"
+  write_timeout: "30s"
