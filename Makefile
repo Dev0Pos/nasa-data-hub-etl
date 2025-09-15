@@ -7,7 +7,7 @@ DOCKER_IMAGE := $(APP_NAME):$(VERSION)
 DOCKER_IMAGE_LATEST := $(APP_NAME):latest
 
 # Go variables
-GO_VERSION := 1.25
+GO_VERSION := 1.24
 GOOS := linux
 GOARCH := amd64
 

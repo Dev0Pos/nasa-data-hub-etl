@@ -13,15 +13,12 @@ import (
 	"nasa-data-hub-etl/internal/etl"
 	"nasa-data-hub-etl/internal/logger"
 	"nasa-data-hub-etl/internal/server"
-
-	"github.com/sirupsen/logrus"
 )
 
 func main() {
 	// Parse command line flags
 	var (
 		healthCheck = flag.Bool("health", false, "Run health check and exit")
-		configPath  = flag.String("config", "config.yaml", "Path to configuration file")
 	)
 	flag.Parse()
 
