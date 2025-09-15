@@ -27,18 +27,13 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
 
-    - name: Cache Go modules
+    - name: Cache Go build cache
       uses: actions/cache@v4
       with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        path: ~/.cache/go-build
+        key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}
         restore-keys: |
-          ${{ runner.os }}-go-
-
-    - name: Clean Go module cache
-      run: go clean -modcache
+          ${{ runner.os }}-go-build-
 
     - name: Download dependencies
       run: go mod download
