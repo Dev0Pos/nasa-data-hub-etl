@@ -151,21 +151,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install Trivy
+    - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        scan-type: 'fs'
-        scan-ref: '.'
+        image-ref: ghcr.io/dev0pos/nasa-data-hub-etl:${{ github.ref_name }}
         format: 'sarif'
         output: 'trivy-results.sarif'
-
-    - name: Run Trivy vulnerability scanner
-      run: |
-        # Convert repository name to lowercase
-        REPO_NAME=$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
-        
-        # Run Trivy scan
-        trivy image --format sarif --output trivy-results.sarif ${{ env.REGISTRY }}/$REPO_NAME:${{ github.ref_name }}
 
     - name: Upload Trivy scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v3
