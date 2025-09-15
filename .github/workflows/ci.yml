@@ -148,12 +148,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Run Trivy vulnerability scanner
+    - name: Install Trivy
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME | downcase }}:${{ github.ref_name }}
+        scan-type: 'fs'
+        scan-ref: '.'
         format: 'sarif'
         output: 'trivy-results.sarif'
+
+    - name: Run Trivy vulnerability scanner
+      run: |
+        # Convert repository name to lowercase
+        REPO_NAME=$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
+        
+        # Run Trivy scan
+        trivy image --format sarif --output trivy-results.sarif ${{ env.REGISTRY }}/$REPO_NAME:${{ github.ref_name }}
 
     - name: Upload Trivy scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v2
