@@ -42,12 +42,12 @@ func main() {
 	if *healthCheck {
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-		
+
 		if err := pipeline.HealthCheck(ctx); err != nil {
 			log.WithError(err).Error("Health check failed")
 			os.Exit(1)
 		}
-		
+
 		log.Info("Health check passed")
 		os.Exit(0)
 	}

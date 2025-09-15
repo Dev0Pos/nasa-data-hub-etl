@@ -16,10 +16,10 @@ import (
 
 // Pipeline represents the ETL pipeline
 type Pipeline struct {
-	config     *config.Config
+	config      *config.Config
 	eonetClient *api.EONETClient
-	db         *database.VerticaDB
-	logger     *logrus.Logger
+	db          *database.VerticaDB
+	logger      *logrus.Logger
 }
 
 // NewPipeline creates a new ETL pipeline
@@ -34,10 +34,10 @@ func NewPipeline(cfg *config.Config, logger *logrus.Logger) (*Pipeline, error) {
 	}
 
 	return &Pipeline{
-		config:     cfg,
+		config:      cfg,
 		eonetClient: eonetClient,
-		db:         db,
-		logger:     logger,
+		db:          db,
+		logger:      logger,
 	}, nil
 }
 

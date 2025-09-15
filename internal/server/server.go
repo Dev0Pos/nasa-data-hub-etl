@@ -50,10 +50,10 @@ func (s *Server) Start(ctx context.Context) error {
 	go func() {
 		<-ctx.Done()
 		s.logger.Info("Shutting down HTTP server")
-		
+
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-		
+
 		if err := s.server.Shutdown(shutdownCtx); err != nil {
 			s.logger.WithError(err).Error("Failed to shutdown HTTP server gracefully")
 		}
@@ -118,11 +118,11 @@ func (s *Server) metricsHandler(w http.ResponseWriter, r *http.Request) {
 	// In the future, this could integrate with Prometheus
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusOK)
-	
+
 	// Get last run info
 	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
 	defer cancel()
-	
+
 	lastRun, err := s.pipeline.GetLastRunInfo(ctx)
 	if err != nil {
 		s.logger.WithError(err).Error("Failed to get last run info")
@@ -134,11 +134,11 @@ func (s *Server) metricsHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "# HELP etl_runs_total Total number of ETL runs\n")
 		fmt.Fprintf(w, "# TYPE etl_runs_total counter\n")
 		fmt.Fprintf(w, "etl_runs_total{status=\"%s\"} 1\n", lastRun.Status)
-		
+
 		fmt.Fprintf(w, "# HELP etl_events_processed_total Total events processed\n")
 		fmt.Fprintf(w, "# TYPE etl_events_processed_total counter\n")
 		fmt.Fprintf(w, "etl_events_processed_total %d\n", lastRun.EventsProcessed)
-		
+
 		fmt.Fprintf(w, "# HELP etl_categories_processed_total Total categories processed\n")
 		fmt.Fprintf(w, "# TYPE etl_categories_processed_total counter\n")
 		fmt.Fprintf(w, "etl_categories_processed_total %d\n", lastRun.CategoriesProcessed)

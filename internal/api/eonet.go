@@ -44,10 +44,10 @@ type FetchEventsOptions struct {
 // FetchEvents fetches events from NASA EONET API
 func (c *EONETClient) FetchEvents(ctx context.Context, opts FetchEventsOptions) (*models.EONETResponse, error) {
 	url := c.buildEventsURL(opts)
-	
+
 	c.logger.WithFields(logrus.Fields{
-		"url":    url,
-		"opts":   opts,
+		"url":  url,
+		"opts": opts,
 	}).Debug("Fetching events from NASA EONET API")
 
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
@@ -85,7 +85,7 @@ func (c *EONETClient) FetchEvents(ctx context.Context, opts FetchEventsOptions) 
 	}
 
 	c.logger.WithFields(logrus.Fields{
-		"events_count": len(eonetResponse.Events),
+		"events_count":     len(eonetResponse.Events),
 		"categories_count": len(eonetResponse.Categories),
 	}).Info("Successfully fetched events from NASA EONET API")
 
@@ -95,7 +95,7 @@ func (c *EONETClient) FetchEvents(ctx context.Context, opts FetchEventsOptions) 
 // FetchCategories fetches categories from NASA EONET API
 func (c *EONETClient) FetchCategories(ctx context.Context) ([]models.Category, error) {
 	url := fmt.Sprintf("%s/categories", c.config.APIURL)
-	
+
 	c.logger.WithField("url", url).Debug("Fetching categories from NASA EONET API")
 
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
@@ -140,43 +140,43 @@ func (c *EONETClient) FetchCategories(ctx context.Context) ([]models.Category, e
 // buildEventsURL builds the URL for fetching events with the given options
 func (c *EONETClient) buildEventsURL(opts FetchEventsOptions) string {
 	url := fmt.Sprintf("%s/events", c.config.APIURL)
-	
+
 	params := make([]string, 0)
-	
+
 	if opts.Days > 0 {
 		params = append(params, fmt.Sprintf("days=%d", opts.Days))
 	}
-	
+
 	if opts.Limit > 0 {
 		params = append(params, fmt.Sprintf("limit=%d", opts.Limit))
 	}
-	
+
 	if opts.Status != "" {
 		params = append(params, fmt.Sprintf("status=%s", opts.Status))
 	}
-	
+
 	if opts.CategoryID > 0 {
 		params = append(params, fmt.Sprintf("category=%d", opts.CategoryID))
 	}
-	
+
 	if opts.SourceID != "" {
 		params = append(params, fmt.Sprintf("source=%s", opts.SourceID))
 	}
-	
+
 	if len(params) > 0 {
 		url += "?" + params[0]
 		for i := 1; i < len(params); i++ {
 			url += "&" + params[i]
 		}
 	}
-	
+
 	return url
 }
 
 // HealthCheck checks if the NASA EONET API is accessible
 func (c *EONETClient) HealthCheck(ctx context.Context) error {
 	url := fmt.Sprintf("%s/categories", c.config.APIURL)
-	
+
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create health check request: %w", err)

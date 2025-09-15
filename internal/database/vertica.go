@@ -276,7 +276,7 @@ func (v *VerticaDB) BatchInsertCategories(ctx context.Context, categories []*mod
 // StartETLRun records the start of an ETL run
 func (v *VerticaDB) StartETLRun(ctx context.Context) (int64, error) {
 	query := `INSERT INTO etl_runs (status) VALUES ('running') RETURNING id`
-	
+
 	var id int64
 	err := v.db.QueryRowContext(ctx, query).Scan(&id)
 	if err != nil {
@@ -348,13 +348,13 @@ func (v *VerticaDB) GetLastETLRun(ctx context.Context) (*ETLRunInfo, error) {
 
 // ETLRunInfo represents information about an ETL run
 type ETLRunInfo struct {
-	ID                   int64     `json:"id"`
-	StartedAt            time.Time `json:"started_at"`
-	CompletedAt          *time.Time `json:"completed_at,omitempty"`
-	Status               string    `json:"status"`
-	EventsProcessed      int       `json:"events_processed"`
-	CategoriesProcessed  int       `json:"categories_processed"`
-	ErrorMessage         *string   `json:"error_message,omitempty"`
+	ID                  int64      `json:"id"`
+	StartedAt           time.Time  `json:"started_at"`
+	CompletedAt         *time.Time `json:"completed_at,omitempty"`
+	Status              string     `json:"status"`
+	EventsProcessed     int        `json:"events_processed"`
+	CategoriesProcessed int        `json:"categories_processed"`
+	ErrorMessage        *string    `json:"error_message,omitempty"`
 }
 
 // HealthCheck checks if the database is accessible

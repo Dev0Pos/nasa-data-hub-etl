@@ -15,14 +15,14 @@ type EONETResponse struct {
 
 // Event represents a natural event from EONET
 type Event struct {
-	ID          string    `json:"id"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Link        string    `json:"link"`
-	Categories  []int     `json:"categories"`
-	Sources     []Source  `json:"sources"`
+	ID          string     `json:"id"`
+	Title       string     `json:"title"`
+	Description string     `json:"description"`
+	Link        string     `json:"link"`
+	Categories  []int      `json:"categories"`
+	Sources     []Source   `json:"sources"`
 	Geometry    []Geometry `json:"geometry"`
-	Closed      *string   `json:"closed"`
+	Closed      *string    `json:"closed"`
 }
 
 // Category represents an event category

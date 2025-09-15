@@ -9,7 +9,7 @@ import (
 // New creates a new logger instance
 func New() *logrus.Logger {
 	log := logrus.New()
-	
+
 	// Set JSON formatter for structured logging
 	log.SetFormatter(&logrus.JSONFormatter{
 		TimestampFormat: "2006-01-02T15:04:05.000Z07:00",
