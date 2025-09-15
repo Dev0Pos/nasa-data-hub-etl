@@ -194,7 +194,7 @@ jobs:
         files: |
           nasa-data-hub-etl
         body: |
-          ## 🚀 NASA Data Hub ETL v${{ github.event.release.tag_name }}
+          ## 🚀 NASA Data Hub ETL ${{ github.ref_name }}
           
           ### What's New
           - High-performance ETL pipeline for NASA EONET data
@@ -204,7 +204,7 @@ jobs:
           
           ### Docker Image
           ```bash
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}
+          docker pull ghcr.io/dev0pos/nasa-data-hub-etl:${{ github.ref_name }}
           ```
           
           ### Quick Start
@@ -217,7 +217,7 @@ jobs:
           docker run --rm \
             -e DATABASE_HOST="$DATABASE_HOST" \
             -e DATABASE_PASSWORD="$DATABASE_PASSWORD" \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}
+            ghcr.io/dev0pos/nasa-data-hub-etl:${{ github.ref_name }}
           ```
         draft: false
         prerelease: false
