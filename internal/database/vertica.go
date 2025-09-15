@@ -177,7 +177,11 @@ func (v *VerticaDB) BatchInsertEvents(ctx context.Context, events []*models.Even
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() {
+		if err := tx.Rollback(); err != nil {
+			v.logger.WithError(err).Error("Failed to rollback transaction")
+		}
+	}()
 
 	query := `
 		INSERT INTO events (id, title, description, link, categories, sources, geometry, closed, updated_at)
@@ -233,7 +237,11 @@ func (v *VerticaDB) BatchInsertCategories(ctx context.Context, categories []*mod
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() {
+		if err := tx.Rollback(); err != nil {
+			v.logger.WithError(err).Error("Failed to rollback transaction")
+		}
+	}()
 
 	query := `
 		INSERT INTO categories (id, title, link, description, layers, updated_at)
