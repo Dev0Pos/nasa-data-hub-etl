@@ -56,11 +56,11 @@ func (v *VerticaDB) createEventsTable(ctx context.Context) error {
 	CREATE TABLE IF NOT EXISTS events (
 		id VARCHAR(255) PRIMARY KEY,
 		title VARCHAR(500),
-		description TEXT,
+		description VARCHAR(10000),
 		link VARCHAR(1000),
-		categories TEXT,
-		sources TEXT,
-		geometries TEXT,
+		categories VARCHAR(10000),
+		sources VARCHAR(10000),
+		geometries VARCHAR(10000),
 		date TIMESTAMP,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -81,7 +81,7 @@ func (v *VerticaDB) createCategoriesTable(ctx context.Context) error {
 	CREATE TABLE IF NOT EXISTS categories (
 		id INT PRIMARY KEY,
 		title VARCHAR(255) NOT NULL,
-		description TEXT,
+		description VARCHAR(10000),
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	)`

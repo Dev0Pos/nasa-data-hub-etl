@@ -67,7 +67,7 @@ func (v *VerticaDB) InitializeSchema() error {
 			id INTEGER PRIMARY KEY,
 			title VARCHAR(255) NOT NULL,
 			link VARCHAR(500),
-			description TEXT,
+			description VARCHAR(10000),
 			layers VARCHAR(255),
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -75,11 +75,11 @@ func (v *VerticaDB) InitializeSchema() error {
 		`CREATE TABLE IF NOT EXISTS events (
 			id VARCHAR(50) PRIMARY KEY,
 			title VARCHAR(500) NOT NULL,
-			description TEXT,
+			description VARCHAR(10000),
 			link VARCHAR(500),
-			categories TEXT,
-			sources TEXT,
-			geometry TEXT,
+			categories VARCHAR(10000),
+			sources VARCHAR(10000),
+			geometry VARCHAR(10000),
 			closed VARCHAR(50),
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -91,7 +91,7 @@ func (v *VerticaDB) InitializeSchema() error {
 			status VARCHAR(20) NOT NULL,
 			events_processed INTEGER DEFAULT 0,
 			categories_processed INTEGER DEFAULT 0,
-			error_message TEXT
+			error_message VARCHAR(10000)
 		)`,
 	}
 
