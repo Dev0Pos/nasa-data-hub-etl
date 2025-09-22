@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strconv"
 	"time"
 )
 
@@ -27,11 +28,29 @@ type Event struct {
 
 // Category represents an event category
 type Category struct {
-	ID          int    `json:"id"`
-	Title       string `json:"title"`
-	Link        string `json:"link"`
-	Description string `json:"description"`
-	Layers      string `json:"layers"`
+	ID          interface{} `json:"id"` // Can be int or string from API
+	Title       string      `json:"title"`
+	Link        string      `json:"link"`
+	Description string      `json:"description"`
+	Layers      string      `json:"layers"`
+}
+
+// GetIDAsInt converts the ID to int, handling both string and int types
+func (c *Category) GetIDAsInt() int {
+	switch v := c.ID.(type) {
+	case int:
+		return v
+	case float64:
+		return int(v)
+	case string:
+		// Try to parse string as int
+		if id, err := strconv.Atoi(v); err == nil {
+			return id
+		}
+		return 0
+	default:
+		return 0
+	}
 }
 
 // Source represents a data source for an event

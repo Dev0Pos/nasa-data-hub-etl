@@ -109,7 +109,7 @@ func (p *Pipeline) processCategories(ctx context.Context) error {
 	categoryRecords := make([]*models.CategoryRecord, 0, len(categories))
 	for _, category := range categories {
 		record := &models.CategoryRecord{
-			ID:          category.ID,
+			ID:          category.GetIDAsInt(),
 			Title:       category.Title,
 			Link:        category.Link,
 			Description: category.Description,
