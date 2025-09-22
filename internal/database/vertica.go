@@ -85,7 +85,7 @@ func (v *VerticaDB) InitializeSchema() error {
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)`,
 		`CREATE TABLE IF NOT EXISTS etl_runs (
-			id SERIAL PRIMARY KEY,
+			id BIGINT PRIMARY KEY,
 			started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			completed_at TIMESTAMP,
 			status VARCHAR(20) NOT NULL,
@@ -283,15 +283,17 @@ func (v *VerticaDB) BatchInsertCategories(ctx context.Context, categories []*mod
 
 // StartETLRun records the start of an ETL run
 func (v *VerticaDB) StartETLRun(ctx context.Context) (int64, error) {
-	query := `INSERT INTO etl_runs (status) VALUES ('running') RETURNING id`
-
-	var id int64
-	err := v.db.QueryRowContext(ctx, query).Scan(&id)
+	// VerticaDB doesn't support RETURNING clause, so we'll use a different approach
+	// For now, we'll return a timestamp-based ID
+	timestamp := time.Now().Unix()
+	
+	query := `INSERT INTO etl_runs (id, status) VALUES (?, 'running')`
+	_, err := v.db.ExecContext(ctx, query, timestamp)
 	if err != nil {
 		return 0, fmt.Errorf("failed to start ETL run: %w", err)
 	}
 
-	return id, nil
+	return timestamp, nil
 }
 
 // CompleteETLRun records the completion of an ETL run
