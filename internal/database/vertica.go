@@ -286,7 +286,7 @@ func (v *VerticaDB) StartETLRun(ctx context.Context) (int64, error) {
 	// VerticaDB doesn't support RETURNING clause, so we'll use a different approach
 	// For now, we'll return a timestamp-based ID
 	timestamp := time.Now().Unix()
-	
+
 	query := `INSERT INTO etl_runs (id, status) VALUES (?, 'running')`
 	_, err := v.db.ExecContext(ctx, query, timestamp)
 	if err != nil {
