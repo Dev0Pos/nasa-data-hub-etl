@@ -127,9 +127,17 @@ func (c *EONETClient) FetchCategories(ctx context.Context) ([]models.Category, e
 		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
+	// Try to unmarshal as direct array first
 	var categories []models.Category
 	if err := json.Unmarshal(body, &categories); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+		// If that fails, try to unmarshal as object with categories field
+		var response struct {
+			Categories []models.Category `json:"categories"`
+		}
+		if err := json.Unmarshal(body, &response); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+		}
+		categories = response.Categories
 	}
 
 	c.logger.WithField("categories_count", len(categories)).Info("Successfully fetched categories from NASA EONET API")

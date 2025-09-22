@@ -109,7 +109,7 @@ func (v *VerticaDB) InitializeSchema() error {
 func (v *VerticaDB) InsertEvent(ctx context.Context, event *models.EventRecord) error {
 	query := `
 		INSERT INTO events (id, title, description, link, categories, sources, geometry, closed, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
 		ON CONFLICT (id) DO UPDATE SET
 			title = EXCLUDED.title,
 			description = EXCLUDED.description,
@@ -143,7 +143,7 @@ func (v *VerticaDB) InsertEvent(ctx context.Context, event *models.EventRecord) 
 func (v *VerticaDB) InsertCategory(ctx context.Context, category *models.CategoryRecord) error {
 	query := `
 		INSERT INTO categories (id, title, link, description, layers, updated_at)
-		VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)
+		VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
 		ON CONFLICT (id) DO UPDATE SET
 			title = EXCLUDED.title,
 			link = EXCLUDED.link,
@@ -185,7 +185,7 @@ func (v *VerticaDB) BatchInsertEvents(ctx context.Context, events []*models.Even
 
 	query := `
 		INSERT INTO events (id, title, description, link, categories, sources, geometry, closed, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
 		ON CONFLICT (id) DO UPDATE SET
 			title = EXCLUDED.title,
 			description = EXCLUDED.description,
@@ -245,7 +245,7 @@ func (v *VerticaDB) BatchInsertCategories(ctx context.Context, categories []*mod
 
 	query := `
 		INSERT INTO categories (id, title, link, description, layers, updated_at)
-		VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)
+		VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
 		ON CONFLICT (id) DO UPDATE SET
 			title = EXCLUDED.title,
 			link = EXCLUDED.link,
@@ -301,14 +301,14 @@ func (v *VerticaDB) CompleteETLRun(ctx context.Context, runID int64, status stri
 	query := `
 		UPDATE etl_runs 
 		SET completed_at = CURRENT_TIMESTAMP,
-			status = $2,
-			events_processed = $3,
-			categories_processed = $4,
-			error_message = $5
-		WHERE id = $1
+			status = ?,
+			events_processed = ?,
+			categories_processed = ?,
+			error_message = ?
+		WHERE id = ?
 	`
 
-	_, err := v.db.ExecContext(ctx, query, runID, status, eventsProcessed, categoriesProcessed, errorMsg)
+	_, err := v.db.ExecContext(ctx, query, status, eventsProcessed, categoriesProcessed, errorMsg, runID)
 	if err != nil {
 		return fmt.Errorf("failed to complete ETL run: %w", err)
 	}
