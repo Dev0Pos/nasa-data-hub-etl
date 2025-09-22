@@ -41,6 +41,11 @@ func NewPipeline(cfg *config.Config, logger *logrus.Logger) (*Pipeline, error) {
 	}, nil
 }
 
+// InitializeDatabase initializes the database structure
+func (p *Pipeline) InitializeDatabase(ctx context.Context, mode database.InitMode) error {
+	return p.db.InitializeDatabase(ctx, mode)
+}
+
 // Run starts the ETL pipeline
 func (p *Pipeline) Run(ctx context.Context) error {
 	p.logger.Info("Starting ETL pipeline")

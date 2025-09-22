@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"nasa-data-hub-etl/internal/config"
+	"nasa-data-hub-etl/internal/database"
 	"nasa-data-hub-etl/internal/etl"
 	"nasa-data-hub-etl/internal/logger"
 	"nasa-data-hub-etl/internal/server"
@@ -19,6 +20,7 @@ func main() {
 	// Parse command line flags
 	var (
 		healthCheck = flag.Bool("health", false, "Run health check and exit")
+		dbInitMode  = flag.String("db-init", "Revive", "Database initialization mode: Create or Revive")
 	)
 	flag.Parse()
 
@@ -38,6 +40,19 @@ func main() {
 	}
 	defer pipeline.Close()
 
+	// Initialize database structure based on mode
+	initMode, err := database.ValidateInitMode(*dbInitMode)
+	if err != nil {
+		log.WithError(err).Fatal("Invalid database initialization mode")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	if err := pipeline.InitializeDatabase(ctx, initMode); err != nil {
+		log.WithError(err).Fatal("Failed to initialize database structure")
+	}
+
 	// Handle health check flag
 	if *healthCheck {
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -53,7 +68,8 @@ func main() {
 	}
 
 	// Setup graceful shutdown
-	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	ctx, cancel = context.WithCancel(context.Background())
 	defer cancel()
 
 	// Handle shutdown signals
