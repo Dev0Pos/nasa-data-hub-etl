@@ -14,10 +14,13 @@ Built with Go for optimal performance and reliability, featuring robust error ha
 - **Prometheus metrics** and structured logging
 - **Configurable batch processing** and scheduling
 - **Health checks** and monitoring endpoints
+- **Database initialization modes** (Create/Revive)
+- **VerticaDB compatibility** with optimized schema
+- **CI/CD pipeline** with automated testing and security scanning
 
 ## 📋 Prerequisites
 
-- Go 1.25+
+- Go 1.24+
 - Kubernetes 1.19+
 - VerticaDB JDBC driver
 - NASA EONET API access
@@ -49,7 +52,8 @@ nasa-data-hub-etl/
 │   ├── api/                        # NASA EONET API client
 │   │   └── eonet.go
 │   ├── database/                   # VerticaDB connection
-│   │   └── vertica.go
+│   │   ├── vertica.go
+│   │   └── init.go                 # Database initialization
 │   ├── etl/                        # ETL pipeline
 │   │   └── pipeline.go
 │   ├── config/                     # Configuration management
@@ -62,9 +66,16 @@ nasa-data-hub-etl/
 │   └── models/                     # Data models
 │       └── eonet.go
 ├── config.yaml                     # Configuration file
+├── env.example                     # Environment variables example
 ├── go.mod                          # Go module file
 ├── Dockerfile                      # Docker configuration
 ├── Makefile                        # Build and development commands
+├── .github/                        # GitHub templates and workflows
+│   ├── workflows/ci.yml            # CI/CD pipeline
+│   ├── ISSUE_TEMPLATE/             # Issue templates
+│   └── PULL_REQUEST_TEMPLATE.md    # PR template
+├── CONTRIBUTING.md                 # Contributing guidelines
+├── RELEASE.md                      # Release notes
 └── README.md                       # This file
 ```
 
@@ -108,6 +119,30 @@ server:
 - `LOG_LEVEL` - Logging level (debug, info, warn, error)
 
 **Security Note:** Never commit sensitive data like passwords to version control. Use environment variables or secrets management systems.
+
+### Database Initialization
+
+The application supports two database initialization modes:
+
+- **Create Mode:** Creates database schema (tables, indexes) on startup
+- **Revive Mode:** Skips schema creation, assumes database structure exists
+
+Use the `--db-init` flag to control the initialization mode:
+
+```bash
+# Create database schema
+./nasa-data-hub-etl --db-init=Create
+
+# Skip schema creation (default)
+./nasa-data-hub-etl --db-init=Revive
+```
+
+In Kubernetes deployments, this is typically controlled via Helm values:
+
+```yaml
+global:
+  initPolicy: "Create"  # or "Revive"
+```
 
 ## 🚀 Quick Start
 
@@ -180,7 +215,7 @@ Kubernetes deployment is handled by a separate deployment project. Please refer 
 - `updated_at` - Record last update timestamp
 
 ### ETL Runs Table
-- `id` - Run identifier
+- `id` - Run identifier (timestamp-based BIGINT)
 - `started_at` - Run start timestamp
 - `completed_at` - Run completion timestamp
 - `status` - Run status (running, completed, failed)
@@ -199,7 +234,7 @@ The application exposes the following HTTP endpoints:
 ### Command Line Options
 
 - `--health` - Run health check and exit
-- `--config` - Path to configuration file (default: config.yaml)
+- `--db-init` - Database initialization mode: "Create" or "Revive" (default: "Revive")
 
 ## 📈 Monitoring
 
@@ -326,6 +361,18 @@ For support and questions:
 
 ## 🔄 Changelog
 
+### v1.0.1 (2025-01-22)
+- **Fixed:** VerticaDB compatibility issues
+  - Replaced `RETURNING` clause with timestamp-based ID generation
+  - Changed `etl_runs.id` from `SERIAL` to `BIGINT`
+  - Fixed database schema initialization for VerticaDB
+- **Added:** Database initialization modes (`Create`/`Revive`)
+- **Added:** Command-line flag `--db-init` for database initialization control
+- **Added:** GitHub templates and CI/CD pipeline
+- **Added:** Comprehensive documentation and contributing guidelines
+- **Updated:** Go version to 1.24 for compatibility
+- **Updated:** Code formatting and linting compliance
+
 ### v1.0.0 (2025-01-07)
 - Initial release
 - NASA EONET API integration
@@ -335,6 +382,6 @@ For support and questions:
 
 ---
 
-**Status:** 🚧 In Development  
-**Version:** 1.0.0  
-**Last Updated:** 2025-01-07
+**Status:** ✅ Stable  
+**Version:** 1.0.1  
+**Last Updated:** 2025-01-22
