@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // InitMode represents database initialization mode
@@ -115,7 +118,7 @@ func (v *VerticaDB) createIndexes(ctx context.Context) error {
 
 // ValidateInitMode validates the initialization mode
 func ValidateInitMode(mode string) (InitMode, error) {
-	normalizedMode := strings.Title(strings.ToLower(mode))
+	normalizedMode := cases.Title(language.English).String(strings.ToLower(mode))
 	switch normalizedMode {
 	case "Create":
 		return InitModeCreate, nil
