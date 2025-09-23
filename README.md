@@ -122,27 +122,36 @@ server:
 
 ### Database Initialization
 
-The application supports two database initialization modes:
+The application supports three database initialization modes:
 
 - **Create Mode:** Creates database schema (tables, indexes) on startup
 - **Revive Mode:** Skips schema creation, assumes database structure exists
+- **Auto Mode:** Automatically detects if structure exists and creates it if needed (default)
 
 Use the `--db-init` flag to control the initialization mode:
 
 ```bash
-# Create database schema
+# Auto-detect and create if needed (default)
+./nasa-data-hub-etl --db-init=Auto
+
+# Force create database schema
 ./nasa-data-hub-etl --db-init=Create
 
-# Skip schema creation (default)
+# Skip schema creation
 ./nasa-data-hub-etl --db-init=Revive
 ```
 
-In Kubernetes deployments, this is typically controlled via Helm values:
+**For CronJob deployments, Auto mode is recommended** - no manual configuration needed!
 
-```yaml
-global:
-  initPolicy: "Create"  # or "Revive"
-```
+### VerticaDB Compatibility
+
+The application is fully compatible with VerticaDB and uses VerticaDB-specific SQL syntax:
+
+- **Catalog queries:** Uses `v_catalog.tables` instead of `information_schema.tables`
+- **SQL placeholders:** Uses `?` placeholders instead of `$1, $2, ...`
+- **No upsert:** Uses simple `INSERT` statements (no `ON CONFLICT`)
+- **Data types:** Uses `VARCHAR(10000)` instead of `TEXT`
+- **Auto-detection:** Automatically detects existing database structure
 
 ## 🚀 Quick Start
 
@@ -234,7 +243,7 @@ The application exposes the following HTTP endpoints:
 ### Command Line Options
 
 - `--health` - Run health check and exit
-- `--db-init` - Database initialization mode: "Create" or "Revive" (default: "Revive")
+- `--db-init` - Database initialization mode: "Create", "Revive", or "Auto" (default: "Auto")
 
 ## 📈 Monitoring
 
@@ -366,8 +375,13 @@ For support and questions:
   - Replaced `RETURNING` clause with timestamp-based ID generation
   - Changed `etl_runs.id` from `SERIAL` to `BIGINT`
   - Fixed database schema initialization for VerticaDB
-- **Added:** Database initialization modes (`Create`/`Revive`)
+  - Replaced PostgreSQL syntax with VerticaDB-compatible SQL
+  - Fixed `information_schema.tables` → `v_catalog.tables`
+  - Removed `ON CONFLICT` clauses (not supported in VerticaDB)
+- **Added:** Database initialization modes (`Create`/`Revive`/`Auto`)
+- **Added:** Auto-detection mode for CronJob deployments
 - **Added:** Command-line flag `--db-init` for database initialization control
+- **Added:** Flexible NASA API JSON parsing (handles string/int IDs)
 - **Added:** GitHub templates and CI/CD pipeline
 - **Added:** Comprehensive documentation and contributing guidelines
 - **Updated:** Go version to 1.24 for compatibility
