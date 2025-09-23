@@ -105,20 +105,11 @@ func (v *VerticaDB) InitializeSchema() error {
 	return nil
 }
 
-// InsertEvent inserts or updates an event record
+// InsertEvent inserts an event record
 func (v *VerticaDB) InsertEvent(ctx context.Context, event *models.EventRecord) error {
 	query := `
-		INSERT INTO events (id, title, description, link, categories, sources, geometry, closed, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-		ON CONFLICT (id) DO UPDATE SET
-			title = EXCLUDED.title,
-			description = EXCLUDED.description,
-			link = EXCLUDED.link,
-			categories = EXCLUDED.categories,
-			sources = EXCLUDED.sources,
-			geometry = EXCLUDED.geometry,
-			closed = EXCLUDED.closed,
-			updated_at = CURRENT_TIMESTAMP
+		INSERT INTO events (id, title, description, link, categories, sources, geometry, closed, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	`
 
 	_, err := v.db.ExecContext(ctx, query,
@@ -139,17 +130,11 @@ func (v *VerticaDB) InsertEvent(ctx context.Context, event *models.EventRecord) 
 	return nil
 }
 
-// InsertCategory inserts or updates a category record
+// InsertCategory inserts a category record
 func (v *VerticaDB) InsertCategory(ctx context.Context, category *models.CategoryRecord) error {
 	query := `
-		INSERT INTO categories (id, title, link, description, layers, updated_at)
-		VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-		ON CONFLICT (id) DO UPDATE SET
-			title = EXCLUDED.title,
-			link = EXCLUDED.link,
-			description = EXCLUDED.description,
-			layers = EXCLUDED.layers,
-			updated_at = CURRENT_TIMESTAMP
+		INSERT INTO categories (id, title, link, description, layers, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	`
 
 	_, err := v.db.ExecContext(ctx, query,
@@ -184,17 +169,8 @@ func (v *VerticaDB) BatchInsertEvents(ctx context.Context, events []*models.Even
 	}()
 
 	query := `
-		INSERT INTO events (id, title, description, link, categories, sources, geometry, closed, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-		ON CONFLICT (id) DO UPDATE SET
-			title = EXCLUDED.title,
-			description = EXCLUDED.description,
-			link = EXCLUDED.link,
-			categories = EXCLUDED.categories,
-			sources = EXCLUDED.sources,
-			geometry = EXCLUDED.geometry,
-			closed = EXCLUDED.closed,
-			updated_at = CURRENT_TIMESTAMP
+		INSERT INTO events (id, title, description, link, categories, sources, geometry, closed, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	`
 
 	stmt, err := tx.PrepareContext(ctx, query)
@@ -244,14 +220,8 @@ func (v *VerticaDB) BatchInsertCategories(ctx context.Context, categories []*mod
 	}()
 
 	query := `
-		INSERT INTO categories (id, title, link, description, layers, updated_at)
-		VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-		ON CONFLICT (id) DO UPDATE SET
-			title = EXCLUDED.title,
-			link = EXCLUDED.link,
-			description = EXCLUDED.description,
-			layers = EXCLUDED.layers,
-			updated_at = CURRENT_TIMESTAMP
+		INSERT INTO categories (id, title, link, description, layers, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	`
 
 	stmt, err := tx.PrepareContext(ctx, query)

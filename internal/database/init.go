@@ -123,16 +123,16 @@ func (v *VerticaDB) createIndexes(ctx context.Context) error {
 func (v *VerticaDB) autoInitializeDatabase(ctx context.Context) error {
 	v.logger.Info("Auto-detecting database structure...")
 	
-	// Check if events table exists
-	var tableExists bool
-	query := `SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'events'`
-	err := v.db.QueryRowContext(ctx, query).Scan(&tableExists)
+	// Check if events table exists using VerticaDB-specific query
+	var tableCount int
+	query := `SELECT COUNT(*) FROM v_catalog.tables WHERE table_name = 'events' AND table_schema = 'public'`
+	err := v.db.QueryRowContext(ctx, query).Scan(&tableCount)
 	if err != nil {
 		v.logger.Info("Database structure not found, creating...")
 		return v.createDatabaseStructure(ctx)
 	}
 	
-	if tableExists {
+	if tableCount > 0 {
 		v.logger.Info("Database structure already exists, skipping creation")
 		return nil
 	}
