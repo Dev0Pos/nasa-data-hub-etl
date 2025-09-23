@@ -15,6 +15,7 @@ type InitMode string
 const (
 	InitModeCreate InitMode = "Create" // Create database structure
 	InitModeRevive InitMode = "Revive" // Skip structure creation
+	InitModeAuto   InitMode = "Auto"   // Auto-detect if structure exists
 )
 
 // InitializeDatabase creates database structure based on mode
@@ -25,8 +26,10 @@ func (v *VerticaDB) InitializeDatabase(ctx context.Context, mode InitMode) error
 	case InitModeRevive:
 		v.logger.Info("Database initialization skipped (revive mode)")
 		return nil
+	case InitModeAuto:
+		return v.autoInitializeDatabase(ctx)
 	default:
-		return fmt.Errorf("unknown initialization mode: %s, supported modes: Create, Revive", mode)
+		return fmt.Errorf("unknown initialization mode: %s, supported modes: Create, Revive, Auto", mode)
 	}
 }
 
@@ -116,6 +119,28 @@ func (v *VerticaDB) createIndexes(ctx context.Context) error {
 	return nil
 }
 
+// autoInitializeDatabase automatically detects if database structure exists and creates it if needed
+func (v *VerticaDB) autoInitializeDatabase(ctx context.Context) error {
+	v.logger.Info("Auto-detecting database structure...")
+	
+	// Check if events table exists
+	var tableExists bool
+	query := `SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'events'`
+	err := v.db.QueryRowContext(ctx, query).Scan(&tableExists)
+	if err != nil {
+		v.logger.Info("Database structure not found, creating...")
+		return v.createDatabaseStructure(ctx)
+	}
+	
+	if tableExists {
+		v.logger.Info("Database structure already exists, skipping creation")
+		return nil
+	}
+	
+	v.logger.Info("Database structure not found, creating...")
+	return v.createDatabaseStructure(ctx)
+}
+
 // ValidateInitMode validates the initialization mode
 func ValidateInitMode(mode string) (InitMode, error) {
 	normalizedMode := cases.Title(language.English).String(strings.ToLower(mode))
@@ -124,7 +149,9 @@ func ValidateInitMode(mode string) (InitMode, error) {
 		return InitModeCreate, nil
 	case "Revive":
 		return InitModeRevive, nil
+	case "Auto":
+		return InitModeAuto, nil
 	default:
-		return "", fmt.Errorf("invalid initialization mode: %s, supported modes: Create, Revive", mode)
+		return "", fmt.Errorf("invalid initialization mode: %s, supported modes: Create, Revive, Auto", mode)
 	}
 }

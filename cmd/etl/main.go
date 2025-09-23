@@ -20,7 +20,7 @@ func main() {
 	// Parse command line flags
 	var (
 		healthCheck = flag.Bool("health", false, "Run health check and exit")
-		dbInitMode  = flag.String("db-init", "Revive", "Database initialization mode: Create or Revive")
+		dbInitMode  = flag.String("db-init", "Auto", "Database initialization mode: Create, Revive, or Auto")
 	)
 	flag.Parse()
 
