@@ -132,6 +132,7 @@ func TestMain_LoadConfiguration(t *testing.T) {
 
 	if cfg == nil {
 		t.Error("loadConfiguration() returned nil config")
+		return
 	}
 
 	// Validate basic configuration
