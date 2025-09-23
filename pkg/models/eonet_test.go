@@ -198,20 +198,20 @@ func TestCategoryRecord_Validation(t *testing.T) {
 		{
 			name: "zero ID",
 			record: CategoryRecord{
-				ID:          0,
-				Title:       "Wildfires",
-				CreatedAt:   time.Now(),
-				UpdatedAt:   time.Now(),
+				ID:        0,
+				Title:     "Wildfires",
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
 			},
 			wantErr: true,
 		},
 		{
 			name: "empty title",
 			record: CategoryRecord{
-				ID:          8,
-				Title:       "",
-				CreatedAt:   time.Now(),
-				UpdatedAt:   time.Now(),
+				ID:        8,
+				Title:     "",
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
 			},
 			wantErr: true,
 		},
