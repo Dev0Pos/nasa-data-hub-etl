@@ -167,8 +167,14 @@ func (p *Pipeline) processEvents(ctx context.Context) (int, error) {
 
 // transformEvent transforms an EONET event to a database record
 func (p *Pipeline) transformEvent(event models.Event) (*models.EventRecord, error) {
+	// Convert CategoryObject array to int array for JSON serialization
+	categoryIDs := make([]int, 0, len(event.Categories))
+	for _, cat := range event.Categories {
+		categoryIDs = append(categoryIDs, cat.GetIDAsInt())
+	}
+	
 	// Serialize categories to JSON
-	categoriesJSON, err := json.Marshal(event.Categories)
+	categoriesJSON, err := json.Marshal(categoryIDs)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal categories: %w", err)
 	}

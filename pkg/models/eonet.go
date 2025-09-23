@@ -16,14 +16,38 @@ type EONETResponse struct {
 
 // Event represents a natural event from EONET
 type Event struct {
-	ID          string     `json:"id"`
-	Title       string     `json:"title"`
-	Description string     `json:"description"`
-	Link        string     `json:"link"`
-	Categories  []int      `json:"categories"`
-	Sources     []Source   `json:"sources"`
-	Geometry    []Geometry `json:"geometry"`
-	Closed      *string    `json:"closed"`
+	ID          string           `json:"id"`
+	Title       string           `json:"title"`
+	Description string           `json:"description"`
+	Link        string           `json:"link"`
+	Categories  []CategoryObject `json:"categories"`
+	Sources     []Source         `json:"sources"`
+	Geometry    []Geometry       `json:"geometry"`
+	Closed      *string          `json:"closed"`
+}
+
+// CategoryObject represents a category object in an event
+type CategoryObject struct {
+	ID    interface{} `json:"id"`    // Can be int or string
+	Title string      `json:"title"`
+}
+
+// GetIDAsInt converts the ID to int, handling both string and int types
+func (co *CategoryObject) GetIDAsInt() int {
+	switch v := co.ID.(type) {
+	case int:
+		return v
+	case float64:
+		return int(v)
+	case string:
+		// Try to parse string as int
+		if id, err := strconv.Atoi(v); err == nil {
+			return id
+		}
+		return 0
+	default:
+		return 0
+	}
 }
 
 // Category represents an event category
