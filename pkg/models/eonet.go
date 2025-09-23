@@ -28,7 +28,7 @@ type Event struct {
 
 // CategoryObject represents a category object in an event
 type CategoryObject struct {
-	ID    interface{} `json:"id"`    // Can be int or string
+	ID    interface{} `json:"id"` // Can be int or string
 	Title string      `json:"title"`
 }
 

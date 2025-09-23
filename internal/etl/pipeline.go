@@ -172,7 +172,7 @@ func (p *Pipeline) transformEvent(event models.Event) (*models.EventRecord, erro
 	for _, cat := range event.Categories {
 		categoryIDs = append(categoryIDs, cat.GetIDAsInt())
 	}
-	
+
 	// Serialize categories to JSON
 	categoriesJSON, err := json.Marshal(categoryIDs)
 	if err != nil {
