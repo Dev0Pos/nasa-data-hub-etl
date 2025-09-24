@@ -131,24 +131,20 @@ func TestMain_LoadConfiguration(t *testing.T) {
 	}
 
 	if cfg == nil {
-		t.Error("loadConfiguration() returned nil config")
-		return
+		t.Fatal("loadConfiguration() returned nil config")
 	}
 
 	// Validate basic configuration
 	if cfg.NASA.APIURL == "" {
-		t.Error("NASA API URL should not be empty")
-		return
+		t.Fatal("NASA API URL should not be empty")
 	}
 
 	if cfg.ETL.BatchSize <= 0 {
-		t.Error("ETL BatchSize should be greater than 0")
-		return
+		t.Fatal("ETL BatchSize should be greater than 0")
 	}
 
 	if cfg.Server.Port <= 0 {
-		t.Error("Server Port should be greater than 0")
-		return
+		t.Fatal("Server Port should be greater than 0")
 	}
 }
 

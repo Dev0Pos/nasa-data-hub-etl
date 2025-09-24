@@ -22,23 +22,19 @@ func TestEONETClient_NewEONETClient(t *testing.T) {
 	client := NewEONETClient(cfg, logger)
 
 	if client == nil {
-		t.Error("NewEONETClient() returned nil")
-		return
+		t.Fatal("NewEONETClient() returned nil")
 	}
 
 	if client.config != cfg {
-		t.Error("NewEONETClient() did not set config correctly")
-		return
+		t.Fatal("NewEONETClient() did not set config correctly")
 	}
 
 	if client.logger != logger {
-		t.Error("NewEONETClient() did not set logger correctly")
-		return
+		t.Fatal("NewEONETClient() did not set logger correctly")
 	}
 
 	if client.httpClient == nil {
-		t.Error("NewEONETClient() did not create HTTP client")
-		return
+		t.Fatal("NewEONETClient() did not create HTTP client")
 	}
 }
 
@@ -98,6 +94,7 @@ func TestEONETClient_FetchCategories(t *testing.T) {
 			// Create test server
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(tt.statusCode)
+				// nolint:errcheck // Ignore error in test
 				_, _ = w.Write([]byte(tt.serverResponse))
 			}))
 			defer server.Close()
@@ -150,6 +147,7 @@ func TestEONETClient_ContextCancellation(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		time.Sleep(100 * time.Millisecond)
 		w.WriteHeader(http.StatusOK)
+		// nolint:errcheck // Ignore error in test
 		_, _ = w.Write([]byte(`[]`))
 	}))
 	defer server.Close()
