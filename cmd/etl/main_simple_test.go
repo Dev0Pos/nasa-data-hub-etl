@@ -138,14 +138,17 @@ func TestMain_LoadConfiguration(t *testing.T) {
 	// Validate basic configuration
 	if cfg.NASA.APIURL == "" {
 		t.Error("NASA API URL should not be empty")
+		return
 	}
 
 	if cfg.ETL.BatchSize <= 0 {
 		t.Error("ETL BatchSize should be greater than 0")
+		return
 	}
 
 	if cfg.Server.Port <= 0 {
 		t.Error("Server Port should be greater than 0")
+		return
 	}
 }
 

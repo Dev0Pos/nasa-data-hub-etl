@@ -28,14 +28,17 @@ func TestEONETClient_NewEONETClient(t *testing.T) {
 
 	if client.config != cfg {
 		t.Error("NewEONETClient() did not set config correctly")
+		return
 	}
 
 	if client.logger != logger {
 		t.Error("NewEONETClient() did not set logger correctly")
+		return
 	}
 
 	if client.httpClient == nil {
 		t.Error("NewEONETClient() did not create HTTP client")
+		return
 	}
 }
 
@@ -93,10 +96,10 @@ func TestEONETClient_FetchCategories(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Create test server
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(tt.statusCode)
-			_, _ = w.Write([]byte(tt.serverResponse))
-		}))
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(tt.statusCode)
+				_, _ = w.Write([]byte(tt.serverResponse))
+			}))
 			defer server.Close()
 
 			// Create client with test server URL
